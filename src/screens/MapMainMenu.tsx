@@ -8,23 +8,23 @@ export default function MapMainMenu() {
     const [latitude, setLatitude] =useState(0)
     const [longitude, setLongitude] =useState(0)
 
+    const setLatLong = (lat: React.SetStateAction<number>,long: React.SetStateAction<number>)=>{
+        setLatitude(lat)
+        setLongitude(long)
+    }
+
     const onUserLocationUpdate = async (location: MapboxGL.Location) => {
         console.log(location)
         let lat = location.coords.latitude;
         let long = location.coords.longitude;
         let alt = location.coords.altitude;
-        setLatitude(lat)
-        setLongitude(long)
+        setLatLong(lat,long)
     } 
+
     const onDragEnd = (e: any) => {
-        console.log('onDragEnd', e);
+        setLatLong(e.geometry.coordinates[0],e.geometry.coordinates[1])
       };
-      const onDragStart = (e: any) => {
-        console.log('onDragStart');
-      };
-      const onDrag = (e: any) => {
-        console.log('onDrag', e);
-      };
+
     const renderAnnotations = () => {
       return (
         <MapboxGL.PointAnnotation
@@ -34,8 +34,7 @@ export default function MapMainMenu() {
           id="pointAnnotation"
           title="Test"
           draggable={true}
-          onDragEnd={(e)=>onDragEnd(e)}
-          onDragStart={(e)=>onDragStart(e)}
+          onDragEnd={(event)=>onDragEnd(event)}
           coordinate={[latitude, longitude]}>
           <Image
             source={require('../assets/images/blackMarker.png')}
@@ -50,7 +49,7 @@ export default function MapMainMenu() {
       );
     };
 
-
+  
 
     return (
         <View style={{flex: 1, height: "100%", width: "100%" }}>
