@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View,Text, StyleSheet } from 'react-native'
+import { View,Text, StyleSheet, Image } from 'react-native'
 import MapboxGL from "@react-native-mapbox-gl/maps";
 
 MapboxGL.setAccessToken("sk.eyJ1Ijoicm93YW54eXoiLCJhIjoiY2tvbmMwd2J2MDAwNDJ2cGl2OTJseG5ndyJ9.B0D-CDqQF-lXGZmAaUpEiQ");
@@ -16,24 +16,41 @@ export default function MapMainMenu() {
         setLatitude(lat)
         setLongitude(long)
     } 
-
+    const onDragEnd = (e: any) => {
+        console.log('onDragEnd', e);
+      };
+      const onDragStart = (e: any) => {
+        console.log('onDragStart');
+      };
+      const onDrag = (e: any) => {
+        console.log('onDrag', e);
+      };
     const renderAnnotations = () => {
-        return (
-          <MapboxGL.PointAnnotation
-            key="pointAnnotation"
-            id="pointAnnotation"
-            coordinate={[latitude, longitude]}>
-            <View style={{
-                      height: 30, 
-                      width: 30, 
-                      backgroundColor: '#00cccc', 
-                      borderRadius: 50, 
-                      borderColor: '#fff', 
-                      borderWidth: 3
-                    }} />
-          </MapboxGL.PointAnnotation>
-        );
-      }
+      return (
+        <MapboxGL.PointAnnotation
+          // key={id}
+          // id={id}
+          key="pointAnnotation"
+          id="pointAnnotation"
+          title="Test"
+          draggable={true}
+          onDragEnd={(e)=>onDragEnd(e)}
+          onDragStart={(e)=>onDragStart(e)}
+          coordinate={[latitude, longitude]}>
+          <Image
+            source={require('../assets/images/blackMarker.png')}
+            style={{
+              flex: 1,
+              resizeMode: 'contain',
+              width: 50,
+              height: 50,
+            }}
+          />
+        </MapboxGL.PointAnnotation>
+      );
+    };
+
+
 
     return (
         <View style={{flex: 1, height: "100%", width: "100%" }}>

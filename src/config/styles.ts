@@ -1,5 +1,5 @@
   
 export const colors = {
-    primary: '#B50717',
+    primary: '#070520',
     secondary: '#12e7c5', // Header background
   }
