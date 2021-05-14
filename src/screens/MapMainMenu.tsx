@@ -7,6 +7,7 @@ MapboxGL.setAccessToken("sk.eyJ1Ijoicm93YW54eXoiLCJhIjoiY2tvbmMwd2J2MDAwNDJ2cGl2
 export default function MapMainMenu() {
     const [latitude, setLatitude] =useState(0)
     const [longitude, setLongitude] =useState(0)
+
     const onUserLocationUpdate = async (location: MapboxGL.Location) => {
         console.log(location)
         let lat = location.coords.latitude;
@@ -15,6 +16,24 @@ export default function MapMainMenu() {
         setLatitude(lat)
         setLongitude(long)
     } 
+
+    const renderAnnotations = () => {
+        return (
+          <MapboxGL.PointAnnotation
+            key="pointAnnotation"
+            id="pointAnnotation"
+            coordinate={[latitude, longitude]}>
+            <View style={{
+                      height: 30, 
+                      width: 30, 
+                      backgroundColor: '#00cccc', 
+                      borderRadius: 50, 
+                      borderColor: '#fff', 
+                      borderWidth: 3
+                    }} />
+          </MapboxGL.PointAnnotation>
+        );
+      }
 
     return (
         <View style={{flex: 1, height: "100%", width: "100%" }}>
@@ -34,7 +53,7 @@ export default function MapMainMenu() {
                    visible={true}
                 onUpdate={(loc) => onUserLocationUpdate(loc)}
             />
-
+            {renderAnnotations()}
         </MapboxGL.MapView>
       </View>
     )
