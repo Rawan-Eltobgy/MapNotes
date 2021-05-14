@@ -17,6 +17,10 @@ target 'MapNotes' do
     # Pods for testing
   end
 
+  pod 'react-native-mapbox-gl', :path => '../node_modules/@react-native-mapbox-gl/maps'
+  pre_install do |installer|
+     $RNMBGL.pre_install(installer)
+   end
   # Enables Flipper.
   #
   # Note that if you have use_frameworks! enabled, Flipper will not work and
@@ -24,5 +28,6 @@ target 'MapNotes' do
   use_flipper!({ 'Flipper-Folly' => '2.5.3', 'Flipper' => '0.87.0', 'Flipper-RSocket' => '1.3.1' })
    post_install do |installer|
      flipper_post_install(installer)
+     $RNMBGL.post_install(installer)
    end
 end
