@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {View, Text, StyleSheet, Image, Button} from 'react-native';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 
-import {FloatingButton} from '../../components';
+import {ActionButton} from '../../components';
 import {Colors} from '../config';
 
 MapboxGL.setAccessToken(
@@ -65,7 +65,20 @@ export default function MapMainMenu() {
   };
   const actionButtonText = noteStep ? 'Set the pin here' : 'Add a note';
   return (
-    <View style={{height: '100%', width: '100%'}}>
+    <View style={styles.viewContainer}>
+    { !!noteStep && <View style={styles.cancelBtn}>
+        <ActionButton
+          onPress={()=>changeNoteStep(true)}
+          buttonIcon
+          style={{
+            backgroundColor: Colors.white,
+            borderRadius: 20,
+            height: 65,
+            width: 65,
+            flex: 1
+          }}
+        />
+      </View>}
       <MapboxGL.MapView
         styleURL={MapboxGL.StyleURL.Outdoors}
         zoomLevel={13}
@@ -84,7 +97,7 @@ export default function MapMainMenu() {
         {renderAnnotations()}
       </MapboxGL.MapView>
       <View style={styles.btnContainer}>
-        <FloatingButton
+        <ActionButton
           onPress={changeNoteStep}
           text={`${actionButtonText}`}
           style={{
@@ -109,6 +122,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
+  viewContainer: {
+    height: '100%',
+    width: '100%',
+  },
   btnContainer: {
     width: '100%',
     backgroundColor: 'transparent',
@@ -117,6 +134,12 @@ const styles = StyleSheet.create({
     marginBottom: '10%',
     zIndex: 10,
     alignItems: 'center',
+  },
+  cancelBtn: {
+    position: 'absolute',
+    left: 40,
+    top: 65,
+    zIndex: 10,
   },
   map: {
     flex: 1,

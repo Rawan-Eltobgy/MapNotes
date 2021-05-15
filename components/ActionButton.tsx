@@ -7,13 +7,16 @@ import {
   Text,
   TextStyle,
   StyleSheet,
+  Image,
+  View,
 } from 'react-native';
 
 type Props = {
   disabled?: boolean;
   isLoading?: boolean;
   onPress: () => void;
-  text: string;
+  text?: string;
+  buttonIcon?: any
   spinnerSize?: 'large' | 'small';
   disabledStyle?: ViewStyle | ViewStyle[];
   transparent?: boolean;
@@ -24,7 +27,7 @@ type Props = {
   children?: any;
 };
 
-export const FloatingButton: FunctionComponent<Props> = (props: Props) => {
+export const ActionButton: FunctionComponent<Props> = (props: Props) => {
   const disabled = props?.disabled || props?.isLoading;
   console.log('text: ', props.text);
   let content = null;
@@ -33,7 +36,17 @@ export const FloatingButton: FunctionComponent<Props> = (props: Props) => {
       <ActivityIndicator color={props.spinnerColor} size={props.spinnerSize} />
     );
   } else {
-    content = (
+    content = props.buttonIcon ? (
+      <View style={styles.centerIcon}>
+      <Image
+        source={require('../src/assets/images/closeBtn.png')}
+        style={{
+          width: 25,
+          height: 25,
+        }}
+      />
+      </View>
+    ) : (
       <Text
         adjustsFontSizeToFit={true}
         style={[
@@ -86,9 +99,14 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     borderRadius: 32,
   },
+  centerIcon: {
+    flex: 1,
+    alignSelf: 'center',
+    justifyContent: 'center',
+  },
 });
 
-FloatingButton.defaultProps = {
+ActionButton.defaultProps = {
   transparent: false,
   disabled: false,
   accessibilityLabel: '',
