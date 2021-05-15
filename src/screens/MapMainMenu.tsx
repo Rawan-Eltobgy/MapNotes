@@ -73,7 +73,33 @@ export default function MapMainMenu({navigation}) {
     console.log("closeModal")
     setIsModalVisible(false)
 }
-
+const renderAllMapMarkers = () => {
+  return (
+    <MapboxGL.ShapeSource
+      id="markersShape"
+      shape={{type: 'FeatureCollection', features}}
+      onPress={this.onPress}>
+      {markers.map(data => (
+        <MapboxGL.SymbolLayer
+          id={getDataId(data)}
+          key={getDataId(data)}
+          sourceID="markersShape"
+          filter={['==', '_id', getDataId(data)]}
+          style={{
+            iconSize: 1,
+            iconAllowOverlap: true,
+          }}>
+          <View
+            style={styles.marker}
+            pointerEvents="none" // this is important for the onPress prop of ShapeSource to work
+          >
+            {/* ... place what you want as a marker here, even SVG from react-native-svg for instance */}
+          </View>
+        </MapboxGL.SymbolLayer>
+      ))}
+    </MapboxGL.ShapeSource>
+  );
+};
 const renderFormModal = () => {
   return (
       <FormScreen

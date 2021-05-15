@@ -5,6 +5,7 @@ import DeviceInfo from 'react-native-device-info'
 
 import { ActionButton } from '../../components'
 import { Colors } from '../config'
+import NoteForm from '../../components/form/NoteForm'
 
 type Props = {
     visible: boolean
@@ -51,7 +52,7 @@ export const FormScreen: FunctionComponent<Props> = (props: Props) => {
                                 <TouchableOpacity onPress={closeModal} style={{ alignContent: 'flex-end' }}>
                                 </TouchableOpacity>
                             </View>
-                            
+                            <NoteForm />
                         <View>
                             <ActionButton
                                 transparent
