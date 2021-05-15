@@ -352,6 +352,8 @@ PODS:
     - React-perflogger (= 0.64.0)
   - RNCAsyncStorage (1.12.1):
     - React-Core
+  - RNDeviceInfo (8.1.3):
+    - React-Core
   - RNGestureHandler (1.10.3):
     - React-Core
   - RNScreens (3.2.0):
@@ -413,6 +415,7 @@ DEPENDENCIES:
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
+  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -497,6 +500,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-community/async-storage"
+  RNDeviceInfo:
+    :path: "../node_modules/react-native-device-info"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNScreens:
@@ -549,6 +554,7 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: cad74a1eaa53ee6e7a3620231939d8fe2c6afcf0
   ReactCommon: cfe2b7fd20e0dbd2d1185cd7d8f99633fbc5ff05
   RNCAsyncStorage: b03032fdbdb725bea0bd9e5ec5a7272865ae7398
+  RNDeviceInfo: 8d3a29207835f972bce883723882980143270d55
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNScreens: c277bfc4b5bb7c2fe977d19635df6f974f95dfd6
   Yoga: 8c8436d4171c87504c648ae23b1d81242bdf3bbf

@@ -4,15 +4,17 @@ import MapboxGL from '@react-native-mapbox-gl/maps';
 
 import {ActionButton} from '../../components';
 import {Colors} from '../config';
+import { FormScreen } from './FormScreen';
 
 MapboxGL.setAccessToken(
   'sk.eyJ1Ijoicm93YW54eXoiLCJhIjoiY2tvbmMwd2J2MDAwNDJ2cGl2OTJseG5ndyJ9.B0D-CDqQF-lXGZmAaUpEiQ',
 );
 
-export default function MapMainMenu() {
+export default function MapMainMenu({navigation}) {
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
   const [noteStep, setNoteStep] = useState(0);
+  const [isModalVisible, setIsModalVisible] = useState(false)
 
   const setLatLong = (
     lat: React.SetStateAction<number>,
@@ -34,6 +36,7 @@ export default function MapMainMenu() {
     setLatLong(e.geometry.coordinates[0], e.geometry.coordinates[1]);
   };
 
+  
   const renderAnnotations = () => {
     return (
       <MapboxGL.PointAnnotation
@@ -58,11 +61,32 @@ export default function MapMainMenu() {
     );
   };
 
+
   const changeNoteStep = (closeBtnClicked: false) => {
-    closeBtnClicked || noteStep === 2
-      ? setNoteStep(0)
+    closeBtnClicked || noteStep ===2 ?
+      setNoteStep(0) : noteStep===1 ?
+      setIsModalVisible(true)
       : setNoteStep(prevState => prevState + 1);
   };
+
+  const closeModal = () => {
+    console.log("closeModal")
+    setIsModalVisible(false)
+}
+
+const renderFormModal = () => {
+  return (
+      <FormScreen
+          visible={isModalVisible}
+          animationIn="slideInUp"
+          animationOut="bounceOutDown"
+          title={"title"}
+          // placeholder={"placeholder"}
+          closeModal={closeModal}
+      />
+  )
+}
+
   const actionButtonText = noteStep ? 'Set the pin here' : 'Add a note';
   return (
     <View style={styles.viewContainer}>
@@ -112,6 +136,7 @@ export default function MapMainMenu() {
           }}
         />
       </View>
+      {renderFormModal()}
     </View>
   );
 }
