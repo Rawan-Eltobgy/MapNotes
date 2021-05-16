@@ -9,7 +9,6 @@ export default function FormInput(props) {
   } = props;
 
   const hasError = errors[name] && touched[name];
-
   return (
     <>
       <TextInput
@@ -22,7 +21,7 @@ export default function FormInput(props) {
         }}
         {...inputProps}
       />
-      {hasError && <Text style={styles.errorText}>{errors[name]}</Text>}
+      {/* {hasError && <Text style={styles.errorText}>{errors[name]}</Text>} */}
     </>
   );
 }

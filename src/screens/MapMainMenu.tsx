@@ -3,7 +3,7 @@ import {View, Text, StyleSheet, Image, Button} from 'react-native';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 
 import {ActionButton} from '../../components';
-import {Colors} from '../config';
+import {Colors, storage} from '../config';
 import { FormScreen } from './FormScreen';
 
 MapboxGL.setAccessToken(
@@ -62,7 +62,9 @@ export default function MapMainMenu({navigation}) {
   };
 
 
-  const changeNoteStep = (closeBtnClicked: false) => {
+  const changeNoteStep = async (closeBtnClicked: false) => {
+    let notes = await storage.getItem('notes') || '[]';
+    console.log("these are my notes: ",notes)
     closeBtnClicked || noteStep ===2 ?
       setNoteStep(0) : noteStep===1 ?
       setIsModalVisible(true)
@@ -70,7 +72,6 @@ export default function MapMainMenu({navigation}) {
   };
 
   const closeModal = () => {
-    console.log("closeModal")
     setIsModalVisible(false)
 }
 const renderAllMapMarkers = () => {
@@ -107,6 +108,7 @@ const renderFormModal = () => {
           animationIn="slideInUp"
           animationOut="bounceOutDown"
           title={"title"}
+          savedPin={[latitude,longitude]}
           // placeholder={"placeholder"}
           closeModal={closeModal}
       />
