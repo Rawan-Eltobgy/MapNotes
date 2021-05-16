@@ -24,10 +24,11 @@ type Props = {
   animationIn?: string;
   animationOut?: string;
   style?: ViewStyle | ViewStyle[];
-  savedPin: Array<number>
+  onSave?: Function,
+  notes?: any
 };
 export const FormScreen: FunctionComponent<Props> = (props: Props) => {
-  const {visible, title, animationIn, animationOut, closeModal, savedPin} = props;
+  const {visible, title, animationIn, animationOut, closeModal, onSave, notes} = props;
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -65,7 +66,7 @@ export const FormScreen: FunctionComponent<Props> = (props: Props) => {
                   />
                 </TouchableOpacity>
               </View>
-              <NoteForm savedPin={savedPin} closeModal={closeModal}/>
+              <NoteForm onSave={onSave} closeModal={closeModal} notes={notes}/>
               {/* <View>
                 <ActionButton
                   transparent
@@ -86,6 +87,7 @@ FormScreen.defaultProps = {
   visible: false,
   animationIn: 'fadeIn',
   animationOut: 'fadeOut',
+  notes: []
 };
 
 const styles = StyleSheet.create({

@@ -21,28 +21,7 @@ const formValidationSchema = yup.object().shape({
 });
 
 export default function NoteForm(props: any) {
-  const saveNotesLocally = async (values: any) => {
-    console.log('values: ', values);
-    try {
-      let data = {
-        title: values.title,
-        description: values.description,
-        memory: values.memory,
-        location: {
-          latitude: props.savedPin[0],
-          longitude: props.savedPin[1],
-        },
-      };
-      console.log('props lat lang: ', props, data);
-      let notes = (await storage.getItem('notes')) || '[]';
-      notes = JSON.parse(notes);
-      notes.push(data);
-      storage.setItem('notes', JSON.stringify(notes)).then(() => {});
-      props.closeModal();
-    } catch (error) {
-      console.log(error);
-    }
-  };
+
   return (
     <Formik
       validationSchema={formValidationSchema}
@@ -110,7 +89,7 @@ export default function NoteForm(props: any) {
           <View style={styles.saveBtnContainer}>
             <Button
               title="SUBMIT"
-              onPress={() => saveNotesLocally(values)}
+              onPress={() => props.onSave(values)}
               disabled={!isValid || values.title === ''}>
               <Text style={{color: '#000'}}>SUBMIT</Text>
             </Button>

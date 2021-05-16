@@ -1,10 +1,11 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, Image, Button} from 'react-native';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 
 import {ActionButton} from '../../components';
 import {Colors, storage} from '../config';
 import { FormScreen } from './FormScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 MapboxGL.setAccessToken(
   'sk.eyJ1Ijoicm93YW54eXoiLCJhIjoiY2tvbmMwd2J2MDAwNDJ2cGl2OTJseG5ndyJ9.B0D-CDqQF-lXGZmAaUpEiQ',
@@ -15,6 +16,38 @@ export default function MapMainMenu({navigation}) {
   const [longitude, setLongitude] = useState(0);
   const [noteStep, setNoteStep] = useState(0);
   const [isModalVisible, setIsModalVisible] = useState(false)
+  const [notes,setNotes]= useState([])
+  useEffect(() => {
+    async function fetchNotes() {
+      let notes =  JSON.parse(await (storage.getItem('notes') || '[]'));
+      setNotes(notes)
+    }
+    fetchNotes()
+  },
+  [notes]
+)
+
+const saveNotesLocally = async (values: any) => {
+  try {
+    let data = {
+      title: values.title,
+      description: values.description,
+      memory: values.memory,
+      location: {
+        latitude: latitude,
+        longitude: longitude,
+      },
+    };
+    let currentNotes = (await storage.getItem('notes')) || '[]';
+    currentNotes = JSON.parse(currentNotes);
+    currentNotes.push(data);
+    storage.setItem('notes', JSON.stringify(currentNotes)).then(() => {});
+    setNotes(currentNotes)
+    closeModal();
+  } catch (error) {
+    console.log(error);
+  }
+};
 
   const setLatLong = (
     lat: React.SetStateAction<number>,
@@ -36,7 +69,7 @@ export default function MapMainMenu({navigation}) {
     setLatLong(e.geometry.coordinates[0], e.geometry.coordinates[1]);
   };
 
-  
+  //Render user current location and pin to move
   const renderAnnotations = () => {
     return (
       <MapboxGL.PointAnnotation
@@ -46,7 +79,7 @@ export default function MapMainMenu({navigation}) {
         id="pointAnnotation"
         title="Test"
         draggable={true}
-        onDragEnd={event => onDragEnd(event)}
+        onDragEnd={(event: any) => onDragEnd(event)}
         coordinate={[latitude, longitude]}>
         <Image
           source={require('../assets/images/blackMarker.png')}
@@ -63,8 +96,6 @@ export default function MapMainMenu({navigation}) {
 
 
   const changeNoteStep = async (closeBtnClicked: false) => {
-    let notes = await storage.getItem('notes') || '[]';
-    console.log("these are my notes: ",notes)
     closeBtnClicked || noteStep ===2 ?
       setNoteStep(0) : noteStep===1 ?
       setIsModalVisible(true)
@@ -74,32 +105,40 @@ export default function MapMainMenu({navigation}) {
   const closeModal = () => {
     setIsModalVisible(false)
 }
+
 const renderAllMapMarkers = () => {
-  return (
-    <MapboxGL.ShapeSource
-      id="markersShape"
-      shape={{type: 'FeatureCollection', features}}
-      onPress={this.onPress}>
-      {markers.map(data => (
-        <MapboxGL.SymbolLayer
-          id={getDataId(data)}
-          key={getDataId(data)}
-          sourceID="markersShape"
-          filter={['==', '_id', getDataId(data)]}
-          style={{
-            iconSize: 1,
-            iconAllowOverlap: true,
-          }}>
-          <View
-            style={styles.marker}
-            pointerEvents="none" // this is important for the onPress prop of ShapeSource to work
-          >
-            {/* ... place what you want as a marker here, even SVG from react-native-svg for instance */}
-          </View>
-        </MapboxGL.SymbolLayer>
-      ))}
-    </MapboxGL.ShapeSource>
-  );
+  return(
+    <>
+     {notes && notes.map((note: any, index) =>  {
+      return(
+        <MapboxGL.PointAnnotation
+        // key={id}
+        // id={id}
+        key={index}
+        id="pointAnnotation"
+        draggable={false}
+        coordinate={[note.location.latitude, note.location.longitude]}>
+        <View
+          pointerEvents="none" // this is important for the onPress prop of ShapeSource to work
+        >
+          <Image
+            source={require('../assets/images/redMarker.png')}
+            style={{
+              flex: 1,
+              resizeMode: 'contain',
+              width: 50,
+              height: 50,
+            }}
+          />
+        </View>
+      </MapboxGL.PointAnnotation>
+      )
+    })
+  }
+
+    </>
+  )
+   
 };
 const renderFormModal = () => {
   return (
@@ -108,7 +147,8 @@ const renderFormModal = () => {
           animationIn="slideInUp"
           animationOut="bounceOutDown"
           title={"title"}
-          savedPin={[latitude,longitude]}
+          notes={notes}
+          onSave={saveNotesLocally}
           // placeholder={"placeholder"}
           closeModal={closeModal}
       />
@@ -147,6 +187,7 @@ const renderFormModal = () => {
           onUpdate={loc => onUserLocationUpdate(loc)}
         />
         {renderAnnotations()}
+        {renderAllMapMarkers()}
       </MapboxGL.MapView>
       <View style={styles.btnContainer}>
         <ActionButton
@@ -165,6 +206,7 @@ const renderFormModal = () => {
         />
       </View>
       {renderFormModal()}
+      
     </View>
   );
 }

@@ -29,7 +29,6 @@ type Props = {
 
 export const ActionButton: FunctionComponent<Props> = (props: Props) => {
   const disabled = props?.disabled || props?.isLoading;
-  console.log('text: ', props.text);
   let content = null;
   if (props.isLoading) {
     content = (
