@@ -29,16 +29,16 @@ export default function FormInput(props) {
 
 const styles = StyleSheet.create({
   textInput: {
-    height: 40,
-    width: '100%',
-    margin: 10,
+    height: 30,
+    width: '60%',
+    marginVertical: '10%',
     backgroundColor: 'white',
     borderColor: 'gray',
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderRadius: 10,
   },
   errorText: {
     fontSize: 10,
+    margin: '3%',
     color: 'red',
   },
   errorInput: {
