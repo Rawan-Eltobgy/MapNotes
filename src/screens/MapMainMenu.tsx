@@ -104,6 +104,7 @@ const saveNotesLocally = async (values: any) => {
 
   const closeModal = () => {
     setIsModalVisible(false)
+    setNoteStep(0)
 }
 
 const renderAllMapMarkers = () => {
