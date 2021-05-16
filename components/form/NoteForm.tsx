@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
         width: '50%',
         marginTop: '8%',
         height: 40,
-        borderRadius: 10,
+        borderRadius: 8,
         borderColor: Colors.gray,
         borderWidth: 1,
         alignItems: 'center',
