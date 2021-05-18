@@ -16,11 +16,11 @@ const formValidationSchema = yup.object().shape({
   title: yup.string().required('Title is required'),
   description: yup
     .string()
-    .min(20, ({min, value}) => `${min - value.length} characters to go`)
+    .min(5, ({min, value}) => `${min - value.length} characters to go`)
     .required(''),
   memory: yup
     .string()
-    .min(20, ({min, value}) => `${min - value.length} characters to go`)
+    .min(5, ({min, value}) => `${min - value.length} characters to go`)
     .required(''),
   photo: yup.object(),
 });
@@ -38,6 +38,10 @@ export const NoteForm: FunctionComponent<Props> = (props: Props) => {
         title:  currentNote?.title ?? '',
         description: currentNote?.description ?? '',
         memory: currentNote?.memory ??'',
+        location:{
+          latitude: currentNote?.location?.latitude ?? 0,
+          longitude: currentNote?.location?.longitude ?? 0
+        }
       }}
       onSubmit={values => console.log('Submit values: ', values)}>
       {({

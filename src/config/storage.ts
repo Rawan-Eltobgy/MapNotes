@@ -2,7 +2,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 let storage= {
   setItem: async (key: any, value: any) => {
     try {
-      console.log("I will set now, ",value)
       await AsyncStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
       console.log("Fail setting item: ",error)
@@ -24,9 +23,8 @@ let storage= {
     try {
       const item = await storage.getItem(key);
       const parsedResult  = JSON.parse(item)
-      // parsedResult[index].location = value.location
       parsedResult[index] = value
-      console.log("the parsedResults: ",parsedResult, value )
+      parsedResult[index].location = value.location
       await AsyncStorage.clear()
       await storage.setItem(key, JSON.stringify(parsedResult));
     } catch (error) {}

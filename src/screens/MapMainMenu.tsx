@@ -45,13 +45,11 @@ export default function MapMainMenu({navigation}) {
           description: values.description,
           memory: values.memory,
           location: {
-            latitude: latitude,
-            longitude: longitude,
+            latitude: values.location.latitude,
+            longitude: values.location.longitude,
           },
         };
-        console.log("this is edit: ",data)
         let updated = (await storage.updateItemAtIndex('notes',data,index));
-        console.log("savelocally reult: ",updated)
         let currentNotes = (await storage.getItem('notes')) || '[]';
         currentNotes = JSON.parse(currentNotes);
         currentNotes.push(data);
@@ -72,9 +70,7 @@ export default function MapMainMenu({navigation}) {
           },
         };
         let currentNotes = (await storage.getItem('notes')) || '[]';
-        console.log("CurrentNotes Before parse: ", currentNotes)
         currentNotes = Array.isArray(currentNotes)? currentNotes:JSON.parse(currentNotes);
-        console.log("CurrentNotes after parse: ", currentNotes)
         currentNotes.push(data);
         storage.setItem('notes', JSON.stringify(currentNotes)).then(() => {
           setNotes(currentNotes)
@@ -95,7 +91,6 @@ export default function MapMainMenu({navigation}) {
   };
 
   const onUserLocationUpdate = async (location: MapboxGL.Location) => {
-    console.log(location);
     let lat = location.coords.latitude;
     let long = location.coords.longitude;
     let alt = location.coords.altitude;
