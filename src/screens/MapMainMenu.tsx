@@ -27,7 +27,9 @@ export default function MapMainMenu({navigation}) {
   const [notes, setNotes] = useState([]);
   const [currentNote, setCurrentNote] = useState({});
   const [index, setIndex] = useState(-1);
+  const [editMode, setEditMode] = useState(false)
   useEffect(() => {
+    // AsyncStorage.clear()
     async function fetchNotes() {
       let notes = JSON.parse(await (storage.getItem('notes') || '[]'));
       setNotes(notes);
@@ -36,24 +38,51 @@ export default function MapMainMenu({navigation}) {
   }, [notes]);
 
   const saveNotesLocally = async (values: any) => {
-    try {
-      let data = {
-        title: values.title,
-        description: values.description,
-        memory: values.memory,
-        location: {
-          latitude: latitude,
-          longitude: longitude,
-        },
-      };
-      let currentNotes = (await storage.getItem('notes')) || '[]';
-      currentNotes = JSON.parse(currentNotes);
-      currentNotes.push(data);
-      storage.setItem('notes', JSON.stringify(currentNotes)).then(() => {});
-      setNotes(currentNotes);
-      closeModal();
-    } catch (error) {
-      console.log(error);
+    if (editMode) {
+      try {
+        let data = {
+          title: values.title,
+          description: values.description,
+          memory: values.memory,
+          location: {
+            latitude: latitude,
+            longitude: longitude,
+          },
+        };
+        console.log("this is edit: ",data)
+        let updated = (await storage.updateItemAtIndex('notes',data,index));
+        console.log("savelocally reult: ",updated)
+        let currentNotes = (await storage.getItem('notes')) || '[]';
+        currentNotes = JSON.parse(currentNotes);
+        currentNotes.push(data);
+        setNotes(currentNotes);
+        closeModal();
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      try {
+        let data = {
+          title: values.title,
+          description: values.description,
+          memory: values.memory,
+          location: {
+            latitude: latitude,
+            longitude: longitude,
+          },
+        };
+        let currentNotes = (await storage.getItem('notes')) || '[]';
+        console.log("CurrentNotes Before parse: ", currentNotes)
+        currentNotes = Array.isArray(currentNotes)? currentNotes:JSON.parse(currentNotes);
+        console.log("CurrentNotes after parse: ", currentNotes)
+        currentNotes.push(data);
+        storage.setItem('notes', JSON.stringify(currentNotes)).then(() => {
+          setNotes(currentNotes)
+          closeModal();
+        });
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -112,12 +141,16 @@ export default function MapMainMenu({navigation}) {
 
   const closeModal = () => {
     setIsModalVisible(false);
+    setEditMode(false);
+    setCurrentNote({})
+    setIndex(-1);
     setNoteStep(0);
   };
 
   const triggerEditModal = (note: any, index: number) => {
     setIndex(index);
     setCurrentNote(note);
+    setEditMode(true)
     setIsModalVisible(true);
   };
   const renderAllMapMarkers = () => {
@@ -161,11 +194,9 @@ export default function MapMainMenu({navigation}) {
         visible={isModalVisible}
         animationIn="slideInUp"
         animationOut="bounceOutDown"
-        title={'title'}
-        notes={notes}
+        title={note?.title ?? ''}
         currentNote={note}
         index={index}
-        editMode={!!note}
         onSave={saveNotesLocally}
         closeModal={closeModal}
       />

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import {Formik, Field} from 'formik';
 import * as yup from 'yup';
 import {TouchableOpacity, Text, Button, StyleSheet, View} from 'react-native';
@@ -6,6 +6,11 @@ import ImagePicker from 'react-native-image-crop-picker';
 
 import FormInput from './FormInput';
 import {Colors, storage} from '../../src/config';
+
+type Props = {
+  onSave: Function;
+  currentNote?: {};
+};
 
 const formValidationSchema = yup.object().shape({
   title: yup.string().required('Title is required'),
@@ -20,15 +25,19 @@ const formValidationSchema = yup.object().shape({
   photo: yup.object(),
 });
 
-export default function NoteForm(props: any) {
+export const NoteForm: FunctionComponent<Props> = (props: Props) => {
+  const {
+    currentNote,
+    onSave,
+  } = props
 
   return (
     <Formik
       validationSchema={formValidationSchema}
       initialValues={{
-        title: '',
-        description: '',
-        memory: '',
+        title:  currentNote?.title ?? '',
+        description: currentNote?.description ?? '',
+        memory: currentNote?.memory ??'',
       }}
       onSubmit={values => console.log('Submit values: ', values)}>
       {({
@@ -89,7 +98,7 @@ export default function NoteForm(props: any) {
           <View style={styles.saveBtnContainer}>
             <Button
               title="SUBMIT"
-              onPress={() => props.onSave(values)}
+              onPress={() => onSave(values)}
               disabled={!isValid || values.title === ''}>
               <Text style={{color: '#000'}}>SUBMIT</Text>
             </Button>

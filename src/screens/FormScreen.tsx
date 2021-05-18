@@ -15,7 +15,7 @@ import DeviceInfo from 'react-native-device-info';
 
 import {ActionButton} from '../../components';
 import {Colors} from '../config';
-import NoteForm from '../../components/form/NoteForm';
+import {NoteForm} from '../../components/form/NoteForm';
 
 type Props = {
   visible: boolean;
@@ -24,14 +24,22 @@ type Props = {
   animationIn?: string;
   animationOut?: string;
   style?: ViewStyle | ViewStyle[];
-  onSave?: Function,
-  notes?: any,
-  currentNote: {},
-  index: number,
-  editMode: boolean
+  onSave?: Function;
+  notes?: any;
+  currentNote: {};
+  index: number;
 };
 export const FormScreen: FunctionComponent<Props> = (props: Props) => {
-  const {visible, title, currentNote, index, editMode, animationIn, animationOut, closeModal, onSave, notes} = props;
+  const {
+    visible,
+    title,
+    currentNote,
+    index,
+    animationIn,
+    animationOut,
+    closeModal,
+    onSave,
+  } = props;
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -69,11 +77,11 @@ export const FormScreen: FunctionComponent<Props> = (props: Props) => {
                   />
                 </TouchableOpacity>
               </View>
-              <NoteForm 
-               currentNote={currentNote}
-               index={index}
-               editMode={editMode}
-              onSave={onSave} closeModal={closeModal} notes={notes}/>
+              <NoteForm
+                currentNote={currentNote}
+                index={index}
+                onSave={onSave}
+              />
               {/* <View>
                 <ActionButton
                   transparent
@@ -94,7 +102,7 @@ FormScreen.defaultProps = {
   visible: false,
   animationIn: 'fadeIn',
   animationOut: 'fadeOut',
-  notes: []
+  notes: [],
 };
 
 const styles = StyleSheet.create({
