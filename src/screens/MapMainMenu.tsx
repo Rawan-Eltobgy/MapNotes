@@ -1,10 +1,18 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, Image, Button} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Button,
+  TextInputBase,
+  TouchableOpacity,
+} from 'react-native';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 
 import {ActionButton} from '../../components';
 import {Colors, storage} from '../config';
-import { FormScreen } from './FormScreen';
+import {FormScreen} from './FormScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 MapboxGL.setAccessToken(
@@ -15,39 +23,39 @@ export default function MapMainMenu({navigation}) {
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
   const [noteStep, setNoteStep] = useState(0);
-  const [isModalVisible, setIsModalVisible] = useState(false)
-  const [notes,setNotes]= useState([])
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [notes, setNotes] = useState([]);
+  const [currentNote, setCurrentNote] = useState({});
+  const [index, setIndex] = useState(-1);
   useEffect(() => {
     async function fetchNotes() {
-      let notes =  JSON.parse(await (storage.getItem('notes') || '[]'));
-      setNotes(notes)
+      let notes = JSON.parse(await (storage.getItem('notes') || '[]'));
+      setNotes(notes);
     }
-    fetchNotes()
-  },
-  [notes]
-)
+    fetchNotes();
+  }, [notes]);
 
-const saveNotesLocally = async (values: any) => {
-  try {
-    let data = {
-      title: values.title,
-      description: values.description,
-      memory: values.memory,
-      location: {
-        latitude: latitude,
-        longitude: longitude,
-      },
-    };
-    let currentNotes = (await storage.getItem('notes')) || '[]';
-    currentNotes = JSON.parse(currentNotes);
-    currentNotes.push(data);
-    storage.setItem('notes', JSON.stringify(currentNotes)).then(() => {});
-    setNotes(currentNotes)
-    closeModal();
-  } catch (error) {
-    console.log(error);
-  }
-};
+  const saveNotesLocally = async (values: any) => {
+    try {
+      let data = {
+        title: values.title,
+        description: values.description,
+        memory: values.memory,
+        location: {
+          latitude: latitude,
+          longitude: longitude,
+        },
+      };
+      let currentNotes = (await storage.getItem('notes')) || '[]';
+      currentNotes = JSON.parse(currentNotes);
+      currentNotes.push(data);
+      storage.setItem('notes', JSON.stringify(currentNotes)).then(() => {});
+      setNotes(currentNotes);
+      closeModal();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const setLatLong = (
     lat: React.SetStateAction<number>,
@@ -94,84 +102,94 @@ const saveNotesLocally = async (values: any) => {
     );
   };
 
-
   const changeNoteStep = async (closeBtnClicked: false) => {
-    closeBtnClicked || noteStep ===2 ?
-      setNoteStep(0) : noteStep===1 ?
-      setIsModalVisible(true)
+    closeBtnClicked || noteStep === 2
+      ? setNoteStep(0)
+      : noteStep === 1
+      ? setIsModalVisible(true)
       : setNoteStep(prevState => prevState + 1);
   };
 
   const closeModal = () => {
-    setIsModalVisible(false)
-    setNoteStep(0)
-}
+    setIsModalVisible(false);
+    setNoteStep(0);
+  };
 
-const renderAllMapMarkers = () => {
-  return(
-    <>
-     {notes && notes.map((note: any, index) =>  {
-      return(
-        <MapboxGL.PointAnnotation
-        // key={id}
-        // id={id}
-        key={index}
-        id="pointAnnotation"
-        draggable={false}
-        coordinate={[note.location.latitude, note.location.longitude]}>
-        <View
-          pointerEvents="none" // this is important for the onPress prop of ShapeSource to work
-        >
-          <Image
-            source={require('../assets/images/redMarker.png')}
-            style={{
-              flex: 1,
-              resizeMode: 'contain',
-              width: 50,
-              height: 50,
-            }}
-          />
-        </View>
-      </MapboxGL.PointAnnotation>
-      )
-    })
-  }
-
-    </>
-  )
-   
-};
-const renderFormModal = () => {
-  return (
+  const triggerEditModal = (note: any, index: number) => {
+    setIndex(index);
+    setCurrentNote(note);
+    setIsModalVisible(true);
+  };
+  const renderAllMapMarkers = () => {
+    return (
+      <>
+        {notes &&
+          notes.map((note: any, index) => {
+            return (
+              <MapboxGL.PointAnnotation
+                // key={id}
+                // id={id}
+                onSelected={() => triggerEditModal(note, index)}
+                key={index}
+                id="pointAnnotation"
+                draggable={false}
+                coordinate={[note.location.latitude, note.location.longitude]}>
+                <View
+                  pointerEvents="none" // this is important for the onPress prop of ShapeSource to work
+                >
+                  <TouchableOpacity onPress={() => console.log('hey')}>
+                    <Image
+                      source={require('../assets/images/redMarker.png')}
+                      style={{
+                        flex: 1,
+                        resizeMode: 'contain',
+                        width: 50,
+                        height: 50,
+                      }}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </MapboxGL.PointAnnotation>
+            );
+          })}
+      </>
+    );
+  };
+  const renderFormModal = (note: {}, index: -1) => {
+    return (
       <FormScreen
-          visible={isModalVisible}
-          animationIn="slideInUp"
-          animationOut="bounceOutDown"
-          title={"title"}
-          notes={notes}
-          onSave={saveNotesLocally}
-          // placeholder={"placeholder"}
-          closeModal={closeModal}
+        visible={isModalVisible}
+        animationIn="slideInUp"
+        animationOut="bounceOutDown"
+        title={'title'}
+        notes={notes}
+        currentNote={note}
+        index={index}
+        editMode={!!note}
+        onSave={saveNotesLocally}
+        closeModal={closeModal}
       />
-  )
-}
+    );
+  };
 
   const actionButtonText = noteStep ? 'Set the pin here' : 'Add a note';
   return (
     <View style={styles.viewContainer}>
-    { !!noteStep && <View style={styles.cancelBtn}>
-        <ActionButton
-          onPress={()=>changeNoteStep(true)}
-          buttonIcon
-          style={{
-            backgroundColor: Colors.white,
-            borderRadius: 20,
-            height: 65,
-            width: 65,
-            flex: 1
-          }}
-        />
-      </View>}
+      {!!noteStep && (
+        <View style={styles.cancelBtn}>
+          <ActionButton
+            onPress={() => changeNoteStep(true)}
+            buttonIcon
+            style={{
+              backgroundColor: Colors.white,
+              borderRadius: 20,
+              height: 65,
+              width: 65,
+              flex: 1,
+            }}
+          />
+        </View>
+      )}
       <MapboxGL.MapView
         styleURL={MapboxGL.StyleURL.Outdoors}
         zoomLevel={13}
@@ -206,8 +224,7 @@ const renderFormModal = () => {
           }}
         />
       </View>
-      {renderFormModal()}
-      
+      {isModalVisible && renderFormModal(currentNote, index)}
     </View>
   );
 }
