@@ -3,10 +3,12 @@
 * React-Native app built using [React-native](https://reactnative.dev/).
 * For MapBox (maps): [mapBox](https://github.com/react-native-mapbox-gl/maps).
 * React-Native Modal for previewing form modal (https://github.com/react-native-modal/react-native-modal).
+* Formik to utilize form and initial values: [Formik] https://github.com/formium/formik
+* YUP to do front-end validation in the form: [YUP] https://github.com/jquense/yup
+* Handling local storage using Async Storage: [AsyncStorage] https://github.com/react-native-async-storage/async-storage
 
 ## Installation And Running
 Clone this repository.
-
 ### For iOS
 1. `yarn install or npm install`
 1. `cd ios && npx pod-install `
