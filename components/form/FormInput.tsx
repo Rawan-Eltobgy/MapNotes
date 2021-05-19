@@ -1,7 +1,7 @@
 import React from 'react';
-import {StyleSheet, Text, TextInput} from 'react-native';
+import {StyleSheet, TextInput} from 'react-native';
 
-export default function FormInput(props) {
+export default function FormInput(props: { [x: string]: any; field: { name: any; onBlur: any; onChange: any; value: any; }; form: { errors: any; touched: any; setFieldTouched: any; }; }) {
   const {
     field: {name, onBlur, onChange, value},
     form: {errors, touched, setFieldTouched},

@@ -19,12 +19,23 @@ let storage= {
       await AsyncStorage.removeItem(key);
     } catch (error) {}
   },
+  
   updateItemAtIndex: async (key: any, value: any, index: number) => {
     try {
       const item = await storage.getItem(key);
       const parsedResult  = JSON.parse(item)
       parsedResult[index] = value
       parsedResult[index].location = value.location
+      await AsyncStorage.clear()
+      await storage.setItem(key, JSON.stringify(parsedResult));
+    } catch (error) {}
+  },
+
+  deleteItemAtIndex: async (key: any, index: number) => {
+    try {
+      const item = await storage.getItem(key);
+      const parsedResult  = JSON.parse(item)
+      let updatedLocation = parsedResult.splice(index,1)
       await AsyncStorage.clear()
       await storage.setItem(key, JSON.stringify(parsedResult));
     } catch (error) {}

@@ -1,11 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   Image,
-  Button,
-  TextInputBase,
   TouchableOpacity,
 } from 'react-native';
 import MapboxGL from '@react-native-mapbox-gl/maps';
@@ -13,7 +10,6 @@ import MapboxGL from '@react-native-mapbox-gl/maps';
 import {ActionButton} from '../../components';
 import {Colors, storage} from '../config';
 import {FormScreen} from './FormScreen';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 MapboxGL.setAccessToken(
   'sk.eyJ1Ijoicm93YW54eXoiLCJhIjoiY2tvbmMwd2J2MDAwNDJ2cGl2OTJseG5ndyJ9.B0D-CDqQF-lXGZmAaUpEiQ',
@@ -27,7 +23,7 @@ export default function MapMainMenu({navigation}) {
   const [notes, setNotes] = useState([]);
   const [currentNote, setCurrentNote] = useState({});
   const [index, setIndex] = useState(-1);
-  const [editMode, setEditMode] = useState(false)
+  const [editMode, setEditMode] = useState(false);
   useEffect(() => {
     // AsyncStorage.clear()
     async function fetchNotes() {
@@ -39,25 +35,33 @@ export default function MapMainMenu({navigation}) {
 
   const saveNotesLocally = async (values: any) => {
     if (editMode) {
-      try {
-        let data = {
-          title: values.title,
-          description: values.description,
-          memory: values.memory,
-          location: {
-            latitude: values.location.latitude,
-            longitude: values.location.longitude,
-          },
-        };
-        let updated = (await storage.updateItemAtIndex('notes',data,index));
-        let currentNotes = (await storage.getItem('notes')) || '[]';
-        currentNotes = JSON.parse(currentNotes);
-        currentNotes.push(data);
-        setNotes(currentNotes);
-        closeModal();
-      } catch (error) {
-        console.log(error);
+      let data = {
+        title: values?.title,
+        description: values?.description,
+        memory: values?.memory,
+        location: {
+          latitude: values?.location?.latitude,
+          longitude: values?.location?.longitude,
+        },
+      };
+      if (!!values.title) {
+        try {
+          let updated = await storage.updateItemAtIndex('notes', data, index);
+        } catch (error) {
+          console.log('Update error: ', error);
+        }
+      } else {
+        try {
+          await storage.deleteItemAtIndex('notes', index);
+        } catch (error) {
+          console.log('Deletion error: ', error);
+        }
       }
+      let currentNotes = (await storage.getItem('notes')) || '[]';
+      currentNotes = JSON.parse(currentNotes);
+      !!values.title ? currentNotes.push(data) : {};
+      setNotes(currentNotes);
+      closeModal();
     } else {
       try {
         let data = {
@@ -70,10 +74,12 @@ export default function MapMainMenu({navigation}) {
           },
         };
         let currentNotes = (await storage.getItem('notes')) || '[]';
-        currentNotes = Array.isArray(currentNotes)? currentNotes:JSON.parse(currentNotes);
+        currentNotes = Array.isArray(currentNotes)
+          ? currentNotes
+          : JSON.parse(currentNotes);
         currentNotes.push(data);
         storage.setItem('notes', JSON.stringify(currentNotes)).then(() => {
-          setNotes(currentNotes)
+          setNotes(currentNotes);
           closeModal();
         });
       } catch (error) {
@@ -137,7 +143,7 @@ export default function MapMainMenu({navigation}) {
   const closeModal = () => {
     setIsModalVisible(false);
     setEditMode(false);
-    setCurrentNote({})
+    setCurrentNote({});
     setIndex(-1);
     setNoteStep(0);
   };
@@ -145,7 +151,7 @@ export default function MapMainMenu({navigation}) {
   const triggerEditModal = (note: any, index: number) => {
     setIndex(index);
     setCurrentNote(note);
-    setEditMode(true)
+    setEditMode(true);
     setIsModalVisible(true);
   };
   const renderAllMapMarkers = () => {
@@ -155,8 +161,6 @@ export default function MapMainMenu({navigation}) {
           notes.map((note: any, index) => {
             return (
               <MapboxGL.PointAnnotation
-                // key={id}
-                // id={id}
                 onSelected={() => triggerEditModal(note, index)}
                 key={index}
                 id="pointAnnotation"

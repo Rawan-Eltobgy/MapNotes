@@ -13,7 +13,6 @@ import {
 import Modal from 'react-native-modal';
 import DeviceInfo from 'react-native-device-info';
 
-import {ActionButton} from '../../components';
 import {Colors} from '../config';
 import {NoteForm} from '../../components/form/NoteForm';
 
